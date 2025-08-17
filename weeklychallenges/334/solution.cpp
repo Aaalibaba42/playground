@@ -26,24 +26,32 @@ int part2(std::pair<std::uint32_t, std::uint32_t> point,
           std::initializer_list<std::pair<std::uint32_t, std::uint32_t>> coords)
 {
     auto rng =
-        coords | vw::filter([point](auto const& coord) {
+        vw::enumerate(coords) | vw::filter([point](auto const& icoord) {
+            auto const& [i, coord] = icoord;
             return point.first == coord.first || point.second == coord.second;
         })
-        | vw::transform([point](auto const& coord) {
-              return std::abs(static_cast<int64_t>(coord.first)
-                              - static_cast<int64_t>(point.first))
-                  + std::abs(static_cast<int64_t>(coord.second)
-                             - static_cast<int64_t>(point.second));
-          })
-        | vw::take(1);
+        | vw::transform([point](auto const& icoord) {
+              auto const& [i, coord] = icoord;
+              return std::pair{ std::abs(static_cast<int64_t>(coord.first)
+                                         - static_cast<int64_t>(point.first))
+                                    + std::abs(
+                                        static_cast<int64_t>(coord.second)
+                                        - static_cast<int64_t>(point.second)),
+                                i };
+          });
 
-    return rng.front();
+    return rg::min(rng).second;
 }
 
 int main()
 {
     std::cout << part1({ 0, 2 }, { -2, 0, 3, -5, 2, -1 }) << std::endl;
     std::cout << part1({ 1, 3 }, { 1, -2, 3, -4, 5 }) << std::endl;
+
+    std::cout << part2({ 3, 4 }, { { 1, 2 }, { 3, 1 }, { 2, 4 }, { 2, 3 } })
+              << std::endl;
+    std::cout << part2({ 2, 5 }, { { 3, 4 }, { 2, 3 }, { 1, 5 }, { 2, 5 } })
+              << std::endl;
 
     return 0;
 }

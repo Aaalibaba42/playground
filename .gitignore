@@ -1,3 +1,7 @@
 .cache
 compile_commands.json
 main
+weeklychallenges/334/txx/
+*.o
+*.hi
+solution
